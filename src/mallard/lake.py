@@ -4,6 +4,7 @@ import os
 from urllib.parse import quote
 
 import dlt
+import duckdb
 
 ALIAS = "lake"
 
@@ -50,6 +51,14 @@ def attach_statements() -> list[str]:
         f"ENDPOINT '{r2_host()}', REGION 'auto', URL_STYLE 'path')",
         f"ATTACH 'ducklake:postgres:{pg_dsn()}' AS {ALIAS} (DATA_PATH '{data_path()}', METADATA_SCHEMA '{ALIAS}')",
     ]
+
+
+def connect() -> duckdb.DuckDBPyConnection:
+    """A fresh in-memory DuckDB connection with the lake attached."""
+    con = duckdb.connect()
+    for statement in attach_statements():
+        con.execute(statement)
+    return con
 
 
 def dlt_destination() -> dlt.destinations.ducklake:

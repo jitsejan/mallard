@@ -5,23 +5,15 @@ uv run python -m scripts.smoke_ducklake
 """
 
 import dlt
-import duckdb
 
 from mallard import lake
 
 SCHEMA = "smoke_test"
 
 
-def connect() -> duckdb.DuckDBPyConnection:
-    con = duckdb.connect()
-    for statement in lake.attach_statements():
-        con.execute(statement)
-    return con
-
-
 def main() -> None:
     print("1. attach lake")
-    con = connect()
+    con = lake.connect()
 
     print("2. write and read through DuckDB")
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {lake.ALIAS}.{SCHEMA}")
@@ -43,7 +35,7 @@ def main() -> None:
     pipeline.run([{"id": 1}], table_name="from_dlt", write_disposition="replace")
 
     print("5. read the dlt table back, then clean up")
-    con = connect()
+    con = lake.connect()
     assert con.execute(f"SELECT count(*) FROM {lake.ALIAS}.{SCHEMA}.from_dlt").fetchone()[0] == 1
     con.execute(f"DROP SCHEMA {lake.ALIAS}.{SCHEMA} CASCADE")
 
