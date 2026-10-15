@@ -51,7 +51,7 @@ def attach_statements() -> list[str]:
     ]
 
 
-def dlt_destination():
+def dlt_destination() -> dlt.destinations.ducklake:
     """dlt reads its DuckLake settings from env vars with this prefix."""
     p = "DESTINATION__DUCKLAKE__CREDENTIALS__"
     os.environ[f"{p}DUCKLAKE_NAME"] = ALIAS
