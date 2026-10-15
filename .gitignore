@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+.env
+*.duckdb
+*.duckdb.wal
+.dlt/secrets.toml
+# Private working notes, ground truth for the work
+SESSION.md
