@@ -38,4 +38,9 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.mypy]
 strict = true
-files = ["src", "tasks.py"]
+files = ["src", "tests", "tasks.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-markers"]
+markers = ["lake: needs the real lake; skipped when its credentials are missing"]

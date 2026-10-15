@@ -17,6 +17,11 @@ def lint(c: Context) -> None:
     c.run("mypy")
 
 
-@task(pre=[lint], default=True)
+@task
+def test(c: Context) -> None:
+    c.run("pytest")
+
+
+@task(pre=[lint, test], default=True)
 def check(c: Context) -> None:
     """Everything CI runs."""
