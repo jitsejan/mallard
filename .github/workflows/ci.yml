@@ -8,9 +8,16 @@ on:
 permissions:
   contents: read
 
+# A newer push to the same branch or pull request makes the running check pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    # A normal run takes about a minute; a hung download should not burn the free minutes.
+    timeout-minutes: 10
     permissions:
       contents: read
       # Lets Codecov verify the upload comes from this repository, so no Codecov token is stored.
