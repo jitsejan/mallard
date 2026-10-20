@@ -18,10 +18,16 @@ def lint(c: Context) -> None:
 
 
 @task
+def audit(c: Context) -> None:
+    """Check locked dependencies for known vulnerabilities."""
+    c.run("uv audit --preview-features audit-command")
+
+
+@task
 def test(c: Context) -> None:
     c.run("pytest")
 
 
-@task(pre=[lint, test], default=True)
+@task(pre=[lint, audit, test], default=True)
 def check(c: Context) -> None:
     """Everything CI runs."""
