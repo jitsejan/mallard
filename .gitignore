@@ -6,3 +6,5 @@ __pycache__/
 .dlt/secrets.toml
 # Private working notes, ground truth for the work
 SESSION.md
+.coverage
+coverage.xml

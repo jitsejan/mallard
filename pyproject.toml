@@ -25,6 +25,7 @@ dev = [
     "mypy>=2.4.0",
     "pre-commit>=4.7.0",
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
     "ruff>=0.17.0",
 ]
 
@@ -40,5 +41,12 @@ files = ["src", "tests", "tasks.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["--strict-markers"]
+addopts = ["--strict-markers", "--cov=mallard", "--cov-report=term-missing", "--cov-report=xml"]
 markers = ["lake: needs the real lake; skipped when its credentials are missing"]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+# Measured offline, as CI runs. Only ever raise this.
+fail_under = 95
