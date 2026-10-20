@@ -1,7 +1,7 @@
 """Write and read a table through DuckDB and through dlt, then clean up.
 
-    set -a; source .env; set +a
-    uv run python -m scripts.smoke_ducklake
+set -a; source .env; set +a
+uv run python -m scripts.smoke_ducklake
 """
 
 import dlt
@@ -26,8 +26,7 @@ def main() -> None:
     print("2. write and read through DuckDB")
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {lake.ALIAS}.{SCHEMA}")
     con.execute(
-        f"CREATE OR REPLACE TABLE {lake.ALIAS}.{SCHEMA}.duck AS "
-        "SELECT i AS id, 'quack' AS word FROM range(1000) t(i)"
+        f"CREATE OR REPLACE TABLE {lake.ALIAS}.{SCHEMA}.duck AS SELECT i AS id, 'quack' AS word FROM range(1000) t(i)"
     )
     assert con.execute(f"SELECT count(*) FROM {lake.ALIAS}.{SCHEMA}.duck").fetchone()[0] == 1000
 
@@ -52,4 +51,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()  
+    main()

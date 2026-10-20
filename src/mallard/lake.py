@@ -35,7 +35,9 @@ def pg_dsn() -> str:
 def pg_url() -> str:
     """Same catalog as a URL (used by dlt)."""
     user, password = quote(env("CATALOG_USER"), safe=""), quote(env("CATALOG_PASSWORD"), safe="")
-    return f"postgres://{user}:{password}@{env('CATALOG_HOST')}:{env('CATALOG_PORT')}/{env('CATALOG_DB')}?sslmode=require"
+    return (
+        f"postgres://{user}:{password}@{env('CATALOG_HOST')}:{env('CATALOG_PORT')}/{env('CATALOG_DB')}?sslmode=require"
+    )
 
 
 def attach_statements() -> list[str]:
@@ -46,12 +48,11 @@ def attach_statements() -> list[str]:
         "INSTALL httpfs",
         f"CREATE OR REPLACE SECRET r2 (TYPE S3, KEY_ID '{env('R2_KEY_ID')}', SECRET '{env('R2_SECRET')}', "
         f"ENDPOINT '{r2_host()}', REGION 'auto', URL_STYLE 'path')",
-        f"ATTACH 'ducklake:postgres:{pg_dsn()}' AS {ALIAS} "
-        f"(DATA_PATH '{data_path()}', METADATA_SCHEMA '{ALIAS}')",
+        f"ATTACH 'ducklake:postgres:{pg_dsn()}' AS {ALIAS} (DATA_PATH '{data_path()}', METADATA_SCHEMA '{ALIAS}')",
     ]
 
 
-def dlt_destination():
+def dlt_destination() -> dlt.destinations.ducklake:
     """dlt reads its DuckLake settings from env vars with this prefix."""
     p = "DESTINATION__DUCKLAKE__CREDENTIALS__"
     os.environ[f"{p}DUCKLAKE_NAME"] = ALIAS
