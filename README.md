@@ -18,6 +18,7 @@ You need [uv](https://docs.astral.sh/uv/), a Postgres database for the catalog (
 ```sh
 uv sync
 cp .env.example .env    # then fill in your own values
+uv run pre-commit install    # lint on commit, tests on push, secrets blocked
 ```
 
 ## Running the checks
