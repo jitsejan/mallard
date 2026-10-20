@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: uv sync --locked
+      - run: uv run invoke lint
+      # No lake credentials here, so tests marked `lake` skip.
+      - run: uv run invoke test
+      # Catches anything committed from a machine without the hooks installed.
+      - run: uv run pre-commit run --all-files
