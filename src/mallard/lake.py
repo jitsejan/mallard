@@ -25,12 +25,9 @@ def r2_host() -> str:
     return f"{env('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com"
 
 
-def pg_dsn() -> str:
-    """libpq connection string for the Supabase catalog (used inside DuckDB's ATTACH)."""
-    return (
-        f"dbname={env('CATALOG_DB')} host={env('CATALOG_HOST')} port={env('CATALOG_PORT')} "
-        f"user={env('CATALOG_USER')} password={env('CATALOG_PASSWORD')} sslmode=require"
-    )
+def sql_literal(value: str) -> str:
+    """A SQL string literal; doubling quotes keeps values like passwords from breaking the statement."""
+    return "'" + value.replace("'", "''") + "'"
 
 
 def pg_url() -> str:
@@ -42,14 +39,21 @@ def pg_url() -> str:
 
 
 def attach_statements() -> list[str]:
-    """SQL that makes the lake available as database `lake` on a fresh DuckDB connection."""
+    """SQL that makes the lake available as database `lake` on a fresh DuckDB connection.
+
+    Credentials go into secrets, never into the ATTACH path: DuckDB repeats that path in its error messages.
+    """
     return [
         "INSTALL ducklake",
         "INSTALL postgres",
         "INSTALL httpfs",
-        f"CREATE OR REPLACE SECRET r2 (TYPE S3, KEY_ID '{env('R2_KEY_ID')}', SECRET '{env('R2_SECRET')}', "
-        f"ENDPOINT '{r2_host()}', REGION 'auto', URL_STYLE 'path')",
-        f"ATTACH 'ducklake:postgres:{pg_dsn()}' AS {ALIAS} (DATA_PATH '{data_path()}', METADATA_SCHEMA '{ALIAS}')",
+        f"CREATE OR REPLACE SECRET r2 (TYPE S3, KEY_ID {sql_literal(env('R2_KEY_ID'))}, "
+        f"SECRET {sql_literal(env('R2_SECRET'))}, ENDPOINT {sql_literal(r2_host())}, REGION 'auto', URL_STYLE 'path')",
+        f"CREATE SECRET (TYPE postgres, HOST {sql_literal(env('CATALOG_HOST'))}, PORT {int(env('CATALOG_PORT'))}, "
+        f"DATABASE {sql_literal(env('CATALOG_DB'))}, USER {sql_literal(env('CATALOG_USER'))}, "
+        f"PASSWORD {sql_literal(env('CATALOG_PASSWORD'))})",
+        f"ATTACH 'ducklake:postgres:sslmode=require' AS {ALIAS} "
+        f"(DATA_PATH {sql_literal(data_path())}, METADATA_SCHEMA '{ALIAS}')",
     ]
 
 
