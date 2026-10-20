@@ -3,6 +3,8 @@ name = "mallard"
 version = "0.1.0"
 description = "Personal data platform on free tiers: dlt, DuckLake, dbt and Dagster, published as a private dashboard."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Jitse-Jan", email = "code@jitsejan.com" }
 ]
