@@ -30,6 +30,7 @@ When I ask Claude Code to make a change, it works one small branch at a time, sh
 ## Tests
 
 - **Everything we build comes with tests.** Every behaviour change has a test that fails on the old code, and Claude Code checks that it does.
+- **Coverage only goes up.** `fail_under` in `pyproject.toml` is measured offline with branch coverage, as CI runs it. Raise it when coverage rises; never lower it to make a change pass.
 - **Assert results, not the absence of errors:** exact rows, columns, and counts.
 - **Unit tests run offline** with fixtures or fakes, such as a small git repository made in `tmp_path` or sample `.jsonl` files. No live services in unit tests or CI.
 - **Tests that need the real lake are marked `lake`** and skip when its credentials are missing. Run them with `uv run --env-file .env invoke test`.
