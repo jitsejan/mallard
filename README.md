@@ -25,9 +25,10 @@ uv run pre-commit install    # lint on commit, tests on push, secrets blocked
 
 ```sh
 uv run invoke lint                     # ruff and strict mypy
+uv run invoke audit                    # known vulnerabilities in locked dependencies
 uv run invoke test                     # offline: tests marked `lake` skip
 uv run --env-file .env invoke test     # also runs the tests against your lake
-uv run invoke                          # lint, then test, as CI does
+uv run invoke                          # lint, audit, then test, as CI does
 ```
 
 The `lake` tests create a uniquely named schema in your lake and drop it afterwards.
