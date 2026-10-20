@@ -13,7 +13,7 @@ Claude Code reads this file at the start of every session in this repository. Th
 | Review and merge every pull request | Drafts issues and pull request descriptions |
 | Decide when to stop | Says honestly when something didn't work |
 
-When I ask Claude Code to make a change, it works one small branch at a time, shows the code and the commands it ran, and waits for my go-ahead before pushing or opening a pull request. It never merges, force-pushes, or rewrites history, and asks before anything hard to undo or outside this repository.
+When I ask Claude Code to make a change, it works one small branch at a time, shows the code and the commands it ran, and waits for my go-ahead before pushing or opening a pull request. It merges only when I explicitly ask, never force-pushes or rewrites history, and asks before anything hard to undo or outside this repository.
 
 ---
 
@@ -40,7 +40,11 @@ When I ask Claude Code to make a change, it works one small branch at a time, sh
 - **Conventional Commits** with only these types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf` (CI changes are `chore:`). A body explains *why*.
 - **Pull request descriptions are one or two short paragraphs:** why, then what changed, then `Closes #<issue>` or `Part of #<issue>`.
 - **Check that each commit succeeded** before the next step; pre-commit hooks can reject a commit silently in a chained command.
-- **Before deleting a branch, confirm its commits are on `main`.**
+- **Merge commits only**, through a pull request with a green CI `check`. A ruleset on `main` enforces this and blocks force pushes.
+- **Stack at most two pull requests**; otherwise merge before starting the next branch.
+- **Merge stacks from the bottom, one at a time.** Only merge a pull request whose base is `main`, and after each merge confirm the next one now targets `main` before doing anything else.
+- **Let GitHub delete merged branches** (the repository does this automatically, which also retargets stacked pull requests). Never `gh pr merge --delete-branch`, and never delete a branch another open pull request targets: check with `gh pr list --base <branch>`.
+- **Before deleting a local branch, confirm its commits are on `main`.**
 - **No AI attribution** (`Co-Authored-By` trailers or "Generated with" footers) and no emoji in commits, pull requests, issues, or comments.
 
 ## Built in the open
