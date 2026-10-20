@@ -11,6 +11,10 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Lets Codecov verify the upload comes from this repository, so no Codecov token is stored.
+      id-token: write
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: astral-sh/setup-uv@v10.2.0
@@ -18,5 +22,10 @@ jobs:
       - run: uv run invoke lint
       # No lake credentials here, so tests marked `lake` skip.
       - run: uv run invoke test
+      - uses: codecov/codecov-action@v7.1.1
+        with:
+          files: coverage.xml
+          use_oidc: true
+          fail_ci_if_error: true
       # Catches anything committed from a machine without the hooks installed.
       - run: uv run pre-commit run --all-files
